@@ -46,7 +46,7 @@ export default function SchedulePage() {
       : null;
 
   return (
-    <div className="relative flex flex-col h-screen bg-white text-foreground">
+    <div className="relative flex flex-col h-screen bg-blue-500 text-foreground">
       {/* 🟢 LOGO levo i desno */}
       <img
         src={logoAkademije}
