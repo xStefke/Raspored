@@ -72,9 +72,9 @@ export default function ProgramSelect({
             }}
           >
             <div className="p-2">
-              <div className="text-lg font-semibold mb-2 text-gray-900">
+              {/* <div className="text-lg font-semibold mb-2 text-gray-900">
                 Године
-              </div>
+              </div> */}
               {program.years.map((year: number) => (
                 <div
                   key={year}
