@@ -10,12 +10,16 @@ export default function SchedulePage() {
   const [selectedStudyType, setSelectedStudyType] = useState<
   "osnovne" | "master" | null > (null);
   const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
-  const [selectedYears, setSelectedYears] = useState<{
-    [programId: string]: number;
-  }>({});
+  const [displayedImage, setDisplayedImage] = useState<string | null>(null);
+  const [displayedProgramYear, setDisplayedProgramYear] = useState<{
+    program: string;
+    year: number;
+  } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
   const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const programs = selectedStudyType ? studyPrograms[selectedStudyType] : [];
 
   // Auto-scroll sa infinity efektom
   useEffect(() => {
@@ -27,25 +31,20 @@ export default function SchedulePage() {
 
       container.scrollLeft += 2;
 
-      const itemWidth = 320 + 32; // clamp max width + gap
-      const totalItems = container.children.length;
-      const singleSetWidth =
-        itemWidth * (totalItems / (programs.length <= 4 ? 3 : 2));
+      const itemWidth = 320 + 32;
+      const singleSetWidth = itemWidth * programs.length;
 
       if (container.scrollLeft >= singleSetWidth) {
-        container.scrollLeft = 0;
+        container.scrollLeft = 1;
       }
     }, 20);
 
     return () => clearInterval(scrollInterval);
-  }, [autoScroll, selectedStudyType]);
-
-  const programs = selectedStudyType ? studyPrograms[selectedStudyType] : [];
+  }, [autoScroll, selectedStudyType, programs.length]);
 
   // Stop auto-scroll na interakciju i resetuj posle 1 minuta
   useEffect(() => {
     const stopAutoScroll = () => {
-      console.log("Scroll zaustavljen!");
       setAutoScroll(false);
 
       if (autoScrollTimeoutRef.current) {
@@ -53,7 +52,6 @@ export default function SchedulePage() {
       }
 
       autoScrollTimeoutRef.current = setTimeout(() => {
-        console.log("Scroll ponovo pokrenut!");
         setAutoScroll(true);
       }, 10000);
     };
@@ -94,47 +92,37 @@ export default function SchedulePage() {
   };
 
   const handleYearSelect = (programId: string, year: number) => {
-    setSelectedYears((prev) => {
-      const newState = {
-        ...prev,
-        [programId]: year,
-      };
-      return newState;
-    });
     setSelectedProgram(programId);
+    setDisplayedProgramYear({ program: programId, year: year });
+    const newImage = `src/img/${programId}${year}.jpg`;
+    setDisplayedImage(newImage);
   };
 
   const handleBackClick = () => {
     setSelectedProgram(null);
     setSelectedStudyType(null);
-    setSelectedYears({});
+    setDisplayedImage(null);
+    setDisplayedProgramYear(null);
   };
 
-  const currentImage =
-    selectedProgram && selectedProgram in selectedYears
-      ? `src/img/${selectedProgram}${selectedYears[selectedProgram]}.jpg`
-      : null;
-
-  const shouldDuplicate = programs.length <= 4;
-  const displayPrograms = shouldDuplicate
-    ? [...programs, ...programs, ...programs, ...programs]
-    : [...programs, ...programs];
+  const displayPrograms =
+    programs.length <= 5 ? programs : [...programs, ...programs];
 
   return (
     <div className="relative flex flex-col h-screen bg-white text-foreground">
       <img
         src={logoAkademije}
         alt="Logo"
-        className="absolute top-6 left-10 w-[clamp(250px,8vw,160px)] h-auto opacity-90 select-none pointer-events-none z-10"
+        className="fixed top-6 left-10 w-[clamp(250px,8vw,160px)] h-auto opacity-90 select-none pointer-events-none z-10"
       />
       <img
         src={logoTima}
         alt="Logo"
-        className="absolute top-6 right-10 w-[clamp(250px,8vw,160px)] h-auto opacity-90 select-none pointer-events-none z-10"
+        className="fixed top-6 right-10 w-[clamp(250px,8vw,160px)] h-auto opacity-90 select-none pointer-events-none z-10"
       />
       <div className="flex-1 min-h-0 flex items-center justify-center">
-        {currentImage ? (
-          <ScheduleImage src={currentImage} />
+        {displayedImage ? (
+          <ScheduleImage src={displayedImage} />
         ) : (
           <div className="flex flex-col items-center justify-center w-full h-full bg-white text-gray-900 text-center px-8">
             <h1 className="text-6xl font-bold mb-6">Добродошли!</h1>
@@ -166,10 +154,14 @@ export default function SchedulePage() {
         )}
 
         {selectedStudyType && (
-          <div className={`${selectedStudyType ==='master' ? "max-w-2/3 mx-auto" : ""}`}>
+          <div
+            className={`flex items-center gap-8 ${
+              programs.length <= 5 ? "justify-center px-10" : "px-10"
+            }`}
+          >
             <Button
               variant="outline"
-              className="absolute left-10 top-1/2 -translate-y-1/2 z-10 flex-none w-[clamp(260px,15vw,320px)] h-[clamp(160px,9vw,220px)] text-2xl rounded-2xl font-semibold shadow-md bg-white"
+              className="flex-none w-[clamp(260px,15vw,320px)] h-[clamp(160px,9vw,220px)] text-2xl rounded-2xl font-semibold shadow-md bg-white"
               onClick={handleBackClick}
             >
               ⬅️ Назад
@@ -177,16 +169,21 @@ export default function SchedulePage() {
 
             <div
               ref={scrollRef}
-              className={`flex gap-8 overflow-x-auto px-4 py-4 scrollbar-hide items-center ml-[calc(10px+clamp(260px,15vw,320px)+2rem)]`}
+              className={`flex gap-8 items-center ${
+                programs.length <= 5
+                  ? "overflow-visible"
+                  : "overflow-x-auto scrollbar-hide flex-1"
+              }`}
             >
               {displayPrograms.map((program, index) => (
                 <ProgramSelect
                   key={`${program.id}-${index}`}
                   program={program}
                   selectedProgram={selectedProgram}
-                  selectedYear={selectedYears[program.id] ?? null}
+                  displayedProgramYear={displayedProgramYear}
                   onProgramSelect={handleProgramSelect}
                   onYearSelect={handleYearSelect}
+                  isScrolling={autoScroll}
                 />
               ))}
             </div>

@@ -5,26 +5,57 @@ import { createPortal } from "react-dom";
 interface ProgramSelectProps {
   program: any;
   selectedProgram: string | null;
-  selectedYear: number | null;
+  displayedProgramYear: { program: string; year: number } | null;
   onProgramSelect: (programId: string) => void;
   onYearSelect: (programId: string, year: number) => void;
+  isScrolling: boolean;
 }
 
 export default function ProgramSelect({
   program,
-  selectedProgram,
-  selectedYear,
+  displayedProgramYear,
   onProgramSelect,
   onYearSelect,
+  isScrolling,
 }: ProgramSelectProps) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ left: 0, top: 0 });
 
   const handleToggle = () => {
     onProgramSelect(program.id);
     setOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (isScrolling && open) {
+      setOpen(false);
+    }
+  }, [isScrolling, open]);
+
+  useEffect(() => {
+    if (!open || !triggerRef.current) return;
+
+    const updatePosition = () => {
+      if (triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect();
+        setDropdownPosition({
+          left: rect.left,
+          top: rect.top,
+        });
+      }
+    };
+
+    updatePosition();
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [open]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -41,15 +72,19 @@ export default function ProgramSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Highlighted je samo ako je slika trenutno prikazana za ovaj program
+  const isActive = displayedProgramYear?.program === program.id;
+  const displayedYear = isActive ? displayedProgramYear?.year : null;
+
   return (
     <div className="relative flex-none">
       <Button
         ref={triggerRef}
-        variant={selectedProgram === program.id ? "default" : "outline"}
+        variant={isActive ? "default" : "outline"}
         className={`flex flex-col justify-center items-center w-[clamp(260px,15vw,320px)] h-[clamp(160px,9vw,220px)]
           text-2xl rounded-2xl transition-all duration-200 overflow-visible whitespace-normal break-words text-center leading-tight px-4 py-3
           ${
-            selectedProgram === program.id
+            isActive
               ? "bg-primary text-primary-foreground shadow-lg"
               : "bg-card hover:bg-accent text-card-foreground"
           }`}
@@ -65,21 +100,18 @@ export default function ProgramSelect({
         createPortal(
           <div
             ref={dropdownRef}
-            className="absolute z-50 w-[clamp(260px,15vw,320px)] bg-white rounded-lg shadow-lg -translate-y-full"
+            className="fixed z-50 w-[clamp(260px,15vw,320px)] bg-white rounded-lg shadow-lg -translate-y-full"
             style={{
-              left: triggerRef.current?.getBoundingClientRect().left,
-              top: triggerRef.current?.getBoundingClientRect().top,
+              left: dropdownPosition.left,
+              top: dropdownPosition.top,
             }}
           >
             <div className="p-2">
-              {/* <div className="text-lg font-semibold mb-2 text-gray-900">
-                Године
-              </div> */}
               {program.years.map((year: number) => (
                 <div
                   key={year}
                   className={`p-3 text-center cursor-pointer rounded-md hover:bg-gray-100 transition-all ${
-                    selectedYear === year
+                    displayedYear === year
                       ? "bg-primary text-primary-foreground"
                       : "text-gray-900"
                   }`}
