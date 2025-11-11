@@ -133,7 +133,7 @@ export default function SchedulePage() {
         )}
       </div>
 
-      <div className="relative w-full py-10 overflow-visible">
+      <div className="relative w-full py-10 overflow-visible shadow-xl border-4 border-gray-300 cursor-pointer">
         {!selectedStudyType && (
           <div className="flex justify-center gap-12">
             <Button
@@ -169,7 +169,7 @@ export default function SchedulePage() {
 
             <div
               ref={scrollRef}
-              className={`flex gap-8 items-center ${
+              className={`flex gap-8 items-center  ${
                 programs.length <= 5
                   ? "overflow-visible"
                   : "overflow-x-auto scrollbar-hide flex-1"
