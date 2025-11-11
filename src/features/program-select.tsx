@@ -110,7 +110,7 @@ export default function ProgramSelect({
               {program.years.map((year: number) => (
                 <div
                   key={year}
-                  className={`p-3 text-center cursor-pointer rounded-md hover:bg-gray-100 transition-all ${
+                  className={`p-3 py-20 text-center cursor-pointer rounded-md hover:bg-gray-100 transition-all text-4xl font-bold ${
                     displayedYear === year
                       ? "bg-primary text-primary-foreground"
                       : "text-gray-900"
