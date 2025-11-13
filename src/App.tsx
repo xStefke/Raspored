@@ -8,7 +8,8 @@ import logoTima from "./img/logo/apps-team-horizontal-01.png";
 
 export default function SchedulePage() {
   const [selectedStudyType, setSelectedStudyType] = useState<
-  "osnovne" | "master" | null > (null);
+    "osnovne" | "master" | null
+  >(null);
   const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
   const [displayedImage, setDisplayedImage] = useState<string | null>(null);
   const [displayedProgramYear, setDisplayedProgramYear] = useState<{
@@ -113,12 +114,12 @@ export default function SchedulePage() {
       <img
         src={logoAkademije}
         alt="Logo"
-        className="fixed top-6 left-10 w-[clamp(250px,8vw,160px)] h-auto opacity-90 select-none pointer-events-none z-10"
+        className="fixed top-6 left-10 w-[clamp(450px,8vw,160px)] h-auto opacity-90 select-none pointer-events-none z-10"
       />
       <img
         src={logoTima}
         alt="Logo"
-        className="fixed top-6 right-10 w-[clamp(250px,8vw,160px)] h-auto opacity-90 select-none pointer-events-none z-10"
+        className="fixed top-6 right-10 w-[clamp(450px,8vw,160px)] h-auto opacity-90 select-none pointer-events-none z-10"
       />
       <div className="flex-1 min-h-0 flex items-center justify-center">
         {displayedImage ? (
@@ -138,14 +139,14 @@ export default function SchedulePage() {
           <div className="flex justify-center gap-12">
             <Button
               variant="outline"
-              className="text-4xl px-16 py-8 rounded-2xl font-semibold shadow-md hover:scale-105 transition-all"
+              className="text-4xl px-16 py-24 rounded-2xl font-semibold shadow-md hover:scale-105 transition-all"
               onClick={() => setSelectedStudyType("osnovne")}
             >
               🎓 Основне студије
             </Button>
             <Button
               variant="outline"
-              className="text-4xl px-16 py-8 rounded-2xl font-semibold shadow-md hover:scale-105 transition-all"
+              className="text-4xl px-16 py-24 rounded-2xl font-semibold shadow-md hover:scale-105 transition-all"
               onClick={() => setSelectedStudyType("master")}
             >
               🎓 Мастер студије
