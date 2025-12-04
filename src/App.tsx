@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import ScheduleImage from "./components/ui/ScheduleImage";
 import { studyPrograms } from "./data/programsData";
 import ProgramSelect from "./features/program-select";
-import logoAkademije from "./img/logo/akademiajlogo.png";
+import logoAkademije from "./img/logo/akademijalogo.png";
 import logoTima from "./img/logo/apps-team-horizontal-01.png";
 
 export default function SchedulePage() {
