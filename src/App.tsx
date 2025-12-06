@@ -162,7 +162,7 @@ export default function SchedulePage() {
           >
             <Button
               variant="outline"
-              className="flex-none w-[clamp(260px,15vw,320px)] h-[clamp(160px,9vw,220px)] text-2xl rounded-2xl font-semibold shadow-md bg-white"
+              className="flex-none w-[clamp(220px,8vw,320px)] h-[clamp(160px,9vw,220px)] text-2xl rounded-2xl font-semibold shadow-md bg-white"
               onClick={handleBackClick}
             >
               ⬅️ Назад
