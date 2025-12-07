@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import ScheduleImage from "./components/ui/ScheduleImage";
 import { studyPrograms } from "./data/programsData";
 import ProgramSelect from "./features/program-select";
-import logoAkademije from "./img/logo/akademijalogo.png";
-import logoTima from "./img/logo/apps-team-horizontal-01.png";
+import logoAkademije from "/img/logo/akademijalogo.png";
+import logoTima from "/img/logo/apps-team-horizontal-01.png";
 
 export default function SchedulePage() {
   const [selectedStudyType, setSelectedStudyType] = useState<
@@ -95,7 +95,7 @@ export default function SchedulePage() {
   const handleYearSelect = (programId: string, year: number) => {
     setSelectedProgram(programId);
     setDisplayedProgramYear({ program: programId, year: year });
-    const newImage = `src/img/${programId}${year}.jpg`;
+    const newImage = `/img/${programId}${year}.jpg`;
     setDisplayedImage(newImage);
   };
 
